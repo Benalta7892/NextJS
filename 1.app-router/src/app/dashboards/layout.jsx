@@ -1,13 +1,15 @@
+import Link from "next/link";
+
 function layout({ children }) {
   return (
     <div>
       <nav className="flex gap-x-2">
-        <a className="underline" href="/dashboards/entreprise">
+        <Link className="underline" href="/dashboards/entreprise">
           Dashboard finance
-        </a>
-        <a className="underline" href="/dashboards/rh">
+        </Link>
+        <Link className="underline" href="/dashboards/rh">
           Dashboard RH
-        </a>
+        </Link>
       </nav>
       {children}
     </div>

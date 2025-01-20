@@ -1,18 +1,20 @@
+import Link from "next/link";
+
 function Navbar() {
   return (
     <nav className="flex gap-x-2">
-      <a className="underline" href="/">
+      <Link className="underline" href="/">
         Accueil
-      </a>
-      <a className="underline" href="/blog">
+      </Link>
+      <Link className="underline" href="/blog">
         Blog
-      </a>
-      <a className="underline" href="/dashboards">
+      </Link>
+      <Link className="underline" href="/dashboards">
         Dashboards
-      </a>
-      <a className="underline" href="/contact">
+      </Link>
+      <Link className="underline" href="/contact">
         Contact
-      </a>
+      </Link>
     </nav>
   );
 }
