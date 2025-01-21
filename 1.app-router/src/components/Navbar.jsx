@@ -4,7 +4,6 @@ import { usePathname } from "next/navigation";
 
 function Navbar() {
   const pathname = usePathname();
-  console.log(pathname);
 
   return (
     <nav className="flex gap-x-2">
