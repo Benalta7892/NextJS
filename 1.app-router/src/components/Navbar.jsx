@@ -6,7 +6,7 @@ function Navbar() {
   const pathname = usePathname();
 
   return (
-    <nav className="flex gap-x-2">
+    <nav className="flex gap-x-2 mb-6">
       <Link className={`underline ${pathname === "/" && "bg-red-600"}`} href="/">
         Accueil
       </Link>
