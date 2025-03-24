@@ -2,7 +2,10 @@ import Link from "next/link";
 import { getPosts } from "@/lib/serverActions";
 
 async function page() {
-  const posts = await getPosts();
+  // const posts = await getPosts();
+  const res = await fetch("http://localhost:3000/api/posts");
+  const posts = await res.json();
+  console.log(posts);
 
   return (
     <main className="mt-12">
