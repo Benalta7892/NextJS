@@ -16,7 +16,7 @@ function Navbar() {
       <Link className={`underline ${pathname === "/dashboards" && "bg-red-600"}`} href="/dashboards">
         Dashboards
       </Link>
-      <Link className={`unederline ${pathname === "/contact" && "bg-red-600"}`} href="/contact">
+      <Link className={`underline ${pathname === "/contact" && "bg-red-600"}`} href="/contact">
         Contact
       </Link>
     </nav>
