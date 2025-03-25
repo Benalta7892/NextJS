@@ -1,1 +1,17 @@
 @import "tailwindcss";
+
+body {
+  @apply bg-white text-black;
+}
+
+html.dark body {
+  @apply bg-slate-900 text-slate-100;
+}
+
+html.dark [data-page="blog"] a {
+  @apply bg-gray-700;
+}
+
+html.dark p {
+  @apply text-gray-300;
+}

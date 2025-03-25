@@ -2,13 +2,13 @@ import Link from "next/link";
 import { getPosts } from "@/lib/serverActions";
 
 async function page() {
-  // const posts = await getPosts();
-  const res = await fetch("http://localhost:3000/api/posts");
-  const posts = await res.json();
+  const posts = await getPosts();
+  // const res = await fetch("http://localhost:3000/api/posts");
+  // const posts = await res.json();
   console.log(posts);
 
   return (
-    <main className="mt-12">
+    <main data-page="blog" className="mt-12">
       <h1 className="text-3xl font-bold mb-4">Blog</h1>
       <p className="text-lg mb-8">Derniers posts :</p>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
