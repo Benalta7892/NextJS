@@ -3,7 +3,7 @@ import Link from "next/link";
 function Navbar() {
   return (
     <nav className="fixed w-full bg-slate-50 border-b border-b-zinc-300">
-      <div className="max-w-6xl mx-auto flex py-4 px-12">
+      <div className="u-main-container flex py-4">
         <Link href="/" className="mr-2 text-zinc-900">
           AXORIA
         </Link>
