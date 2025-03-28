@@ -1,24 +1,28 @@
 import { connect } from "mongoose";
 import Link from "next/link";
 import { connectToDB } from "@/lib/utils/db/connectToDB";
+import { getPosts } from "@/lib/serverMethods/blog/postMethods";
 
-const posts = [
-  {
-    author: "John Doe",
-    title: "5 CSS tricks",
-  },
-  {
-    author: "Victor Wallas",
-    title: "How to code a navbar",
-  },
-  {
-    author: "Bruce Willis",
-    title: "How to setup TypeScript",
-  },
-];
+// const posts = [
+//   {
+//     author: "John Doe",
+//     title: "5 CSS tricks",
+//   },
+//   {
+//     author: "Victor Wallas",
+//     title: "How to code a navbar",
+//   },
+//   {
+//     author: "Bruce Willis",
+//     title: "How to setup TypeScript",
+//   },
+// ];
 
 export default async function Home() {
   await connectToDB();
+
+  const posts = await getPosts();
+  console.log("posts", posts);
 
   return (
     <div className="u-main-container u-padding-content-container">
@@ -45,15 +49,15 @@ export default async function Home() {
                   })}
                 </time>
                 <Link
-                  href={`/categories/author/${post.autho}`}
+                  href={`/categories/author/johndoe`}
                   className="ml-auto text-base text-gray-700
                   hover:text-gray-600 whitespace-nowrap truncate"
                 >
-                  {post.author}
+                  John Doe
                 </Link>
               </div>
               <Link
-                href={`/articles/${post.title}`}
+                href={`/article/${post.slug}`}
                 className="inline-block mt-6
               text-xl font-semibold text-zinc-800 hover:text-zinc-600
               "

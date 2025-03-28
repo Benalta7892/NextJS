@@ -13,3 +13,12 @@ export const getPost = async (slug) => {
     throw new Error("Failed to fetch post");
   }
 };
+
+export const getPosts = async () => {
+  try {
+    await connectToDB();
+    const posts = await Post.find({});
+
+    return posts;
+  } catch (err) {}
+};
