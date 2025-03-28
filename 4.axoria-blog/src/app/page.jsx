@@ -1,6 +1,6 @@
 import { connect } from "mongoose";
 import Link from "next/link";
-import { connectToDB } from "./lib/utils/db/connectToDB";
+import { connectToDB } from "@/lib/utils/db/connectToDB";
 
 const posts = [
   {

@@ -1,6 +1,6 @@
 "use server";
-
 import { connectToDB } from "@/lib/utils/db/connectToDB";
+import { Post } from "@/lib/models/post";
 
 export async function addPost(formData) {
   // On extrait les données du formulaire (destructuring grace aux names des inputs et textarea)
