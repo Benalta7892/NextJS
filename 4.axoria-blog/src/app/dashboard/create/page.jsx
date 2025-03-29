@@ -18,9 +18,25 @@ function page() {
     const result = await addPost(formData);
   };
 
-  const handleAddTag = () => {};
+  const handleAddTag = () => {
+    const newTag = tagInputRef.current.value.trim().toLowerCase();
 
-  const handleRemoveTag = (tag) => {};
+    if (newTag !== "" && !tags.includes(newTag) && tags.length <= 4) {
+      setTags([...tags, newTag]);
+      tagInputRef.current.value = "";
+    }
+  };
+
+  const handleRemoveTag = (tagToRemove) => {
+    setTags(tags.filter((tag) => tag !== tagToRemove));
+  };
+
+  const handleEnterOnTagInput = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      handleAddTag();
+    }
+  };
 
   return (
     <main className="u-main-container bg-white p-7 mt-32 mb-44">
@@ -51,6 +67,7 @@ function page() {
               id="tag"
               placeholder="Add a tag"
               ref={tagInputRef}
+              onKeyDown={handleEnterOnTagInput}
             />
             <button
               className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold p-4 rounded mx-4"
