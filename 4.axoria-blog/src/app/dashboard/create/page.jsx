@@ -3,13 +3,17 @@ import { addPost } from "@/lib/serverActions/blog/postServerActions";
 import { useState, useRef } from "react";
 
 function page() {
-  const [tags, setTags] = useState(["css", "javascript"]);
+  const [tags, setTags] = useState([]);
   const tagInputRef = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     const formData = new FormData(e.target);
+    // On met tags dans le formData
+    // On utilise JSON.stringify pour convertir le tableau en chaîne de caractères
+    formData.set("tags", JSON.stringify(tags));
+    console.log(formData);
 
     for (const [key, value] of formData.entries()) {
       console.log(key, value);

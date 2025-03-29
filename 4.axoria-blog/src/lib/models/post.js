@@ -16,6 +16,12 @@ const postSchema = new mongoose.Schema(
       type: String,
       unique: true,
     },
+    tags: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Tag",
+      },
+    ],
   },
   // On rajoute la date de création et de modification du post
   { timestamps: true }
