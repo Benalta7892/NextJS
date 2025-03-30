@@ -7,6 +7,9 @@ import { marked } from "marked"; // Transforme le texte format markdown en texte
 import { JSDOM } from "jsdom"; // jsdom et dompurify pour eviter les attaques, purifier le html, enlever les scripts malicieux...
 import createDOMPurify from "dompurify";
 
+const window = new JSDOM("").window;
+const DOMPurify = createDOMPurify(window);
+
 export async function addPost(formData) {
   // On extrait les données du formulaire (destructuring grace aux names des inputs et textarea)
   const { title, markdownArticle, tags } = Object.fromEntries(formData);
@@ -40,7 +43,8 @@ export async function addPost(formData) {
 
     // Gestiuon du markdown
     let markdownHTMLResult = marked(markdownArticle);
-    console.log(markdownHTMLResult, "markdownHTMLResult");
+
+    markdownHTMLResult = DOMPurify.sanitize(markdownHTMLResult);
 
     // On definit le modèle de données "Post" pour creer une instance de post
     const newPost = new Post({
