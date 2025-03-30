@@ -19,11 +19,11 @@ function page() {
     // On met tags dans le formData
     // On utilise JSON.stringify pour convertir le tableau en chaîne de caractères
     formData.set("tags", JSON.stringify(tags));
-    console.log(formData);
+    // console.log(formData);
 
-    for (const [key, value] of formData.entries()) {
-      console.log(key, value);
-    }
+    // for (const [key, value] of formData.entries()) {
+    //   console.log(key, value);
+    // }
 
     serverValidationText.current.textContent = "";
     submitButtonRef.current.textContent = "Saving Post...";
