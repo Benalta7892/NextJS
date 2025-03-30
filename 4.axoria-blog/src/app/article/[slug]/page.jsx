@@ -15,7 +15,7 @@ const page = async ({ params }) => {
           </Link>
         ))}
       </p>
-      <p>{post.markdownArticle}</p>
+      <div dangerouslySetInnerHTML={{ __html: post.markdownHTMLResult }} className="articles-styles"></div>
     </main>
   );
 };

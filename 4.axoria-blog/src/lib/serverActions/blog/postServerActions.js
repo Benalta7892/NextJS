@@ -3,6 +3,9 @@ import { connectToDB } from "@/lib/utils/db/connectToDB";
 import { Post } from "@/lib/models/post";
 import { Tag } from "@/lib/models/tag";
 import slugify from "slugify";
+import { marked } from "marked"; // Transforme le texte format markdown en texte html
+import { JSDOM } from "jsdom"; // jsdom et dompurify pour eviter les attaques, purifier le html, enlever les scripts malicieux...
+import createDOMPurify from "dompurify";
 
 export async function addPost(formData) {
   // On extrait les données du formulaire (destructuring grace aux names des inputs et textarea)
@@ -35,10 +38,15 @@ export async function addPost(formData) {
       })
     );
 
+    // Gestiuon du markdown
+    let markdownHTMLResult = marked(markdownArticle);
+    console.log(markdownHTMLResult, "markdownHTMLResult");
+
     // On definit le modèle de données "Post" pour creer une instance de post
     const newPost = new Post({
       title,
       markdownArticle,
+      markdownHTMLResult,
       tags: tagIds,
     });
 
