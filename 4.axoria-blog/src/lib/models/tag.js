@@ -1,5 +1,4 @@
 import mongoose from "mongoose";
-import slugify from "slugify";
 
 const tagSchema = new mongoose.Schema(
   {

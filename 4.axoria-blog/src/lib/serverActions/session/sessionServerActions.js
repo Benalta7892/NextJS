@@ -1,9 +1,12 @@
+"use server";
 import { User } from "@/lib/models/user";
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import slugify from "slugify";
+import bcrypt from "bcryptjs";
 
 export async function register(formData) {
-  const { userName, email, password, passwordReapeat } = Object.fromEntries(formData);
+  console.log("SERVER ACTION register() called");
+  const { userName, email, password, passwordRepeat } = Object.fromEntries(formData);
 
   if (userName.length < 3) {
     throw new Error("Username is too short");
@@ -13,12 +16,12 @@ export async function register(formData) {
     throw new Error("Password is too short");
   }
 
-  if (password !== passwordReapeat) {
+  if (password !== passwordRepeat) {
     throw new Error("Password do not match");
   }
 
   try {
-    connectToDB();
+    await connectToDB();
     const user = await User.findOne({ userName });
 
     if (user) {
@@ -43,7 +46,7 @@ export async function register(formData) {
 
     return { success: true };
   } catch (error) {
-    console.log("Error while signing up the user :", err);
-    throw new Error(err.message || "An error occured while signing up the user");
+    console.log("Error while signing up the user :", error);
+    throw new Error(error.message || "An error occured while signing up the user");
   }
 }
