@@ -6,6 +6,11 @@ import slugify from "slugify";
 import { marked } from "marked"; // Transforme le texte format markdown en texte html
 import { JSDOM } from "jsdom"; // jsdom et dompurify pour eviter les attaques, purifier le html, enlever les scripts malicieux...
 import createDOMPurify from "dompurify";
+import Prism from "prismjs";
+import { markedHighlight } from "marked-highlight";
+import "prismjs/components/prism-markup";
+import "prismjs/components/prism-css";
+import "prismjs/components/prism-javascript";
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
@@ -42,6 +47,16 @@ export async function addPost(formData) {
     );
 
     // Gestiuon du markdown
+    marked.use(
+      markedHighlight({
+        highlight: (code, language) => {
+          const validLanguage = Prism.languages[language] ? language : "plaintext";
+
+          return Prism.highlight(code, Prism.languages[validLanguage], validLanguage);
+        },
+      })
+    );
+
     let markdownHTMLResult = marked(markdownArticle);
 
     markdownHTMLResult = DOMPurify.sanitize(markdownHTMLResult);
