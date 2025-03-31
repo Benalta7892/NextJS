@@ -65,6 +65,10 @@ export async function login(formData) {
       throw new Error("Invalid credentials");
     }
 
+    console.log("User found:", user);
+    console.log("User password (hashed):", user.password);
+    console.log("Password entered:", password);
+
     const isPassworValid = await bcrypt.compare(password, user.password);
 
     if (!isPassworValid) {

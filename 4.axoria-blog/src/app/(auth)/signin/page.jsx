@@ -1,24 +1,50 @@
 "use client";
 import { useRef } from "react";
+import { login } from "@/lib/serverActions/session/sessionServerActions";
+import { useRouter } from "next/navigation";
 
 function page() {
   const serverInfoRef = useRef();
   const submitButtonRef = useRef();
 
-  const handleSubmit = (e) => {
+  const router = useRouter();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    serverInfoRef.current.textContent = "";
+    submitButtonRef.current.disabled = true;
+
+    try {
+      const result = await login(new FormData(e.target));
+
+      if (result.success) {
+        router.push("/");
+      }
+    } catch (error) {
+      console.error("Error during login :", error);
+      submitButtonRef.current.disabled = false;
+      serverInfoRef.current.textContent = error.message;
+    }
   };
+
   return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto mt-36">
       <label htmlFor="userName" className="f-label">
         Your pseudo
       </label>
-      <input type="text" className="f-auth-input" id="userName" placeholder="Your pseudo" required />
+      <input type="text" className="f-auth-input" id="userName" name="userName" placeholder="Your pseudo" required />
 
       <label htmlFor="password" className="f-label">
         Your password
       </label>
-      <input type="password" className="f-auth-input" id="password" placeholder="Your password" required />
+      <input
+        type="password"
+        className="f-auth-input"
+        id="password"
+        name="password"
+        placeholder="Your password"
+        required
+      />
 
       <button
         ref={submitButtonRef}
