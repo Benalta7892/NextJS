@@ -3,6 +3,8 @@ import { User } from "@/lib/models/user";
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import slugify from "slugify";
 import bcrypt from "bcryptjs";
+import { Session } from "@/lib/models/session";
+import { cookies } from "next/headers";
 
 export async function register(formData) {
   console.log("SERVER ACTION register() called");
@@ -48,5 +50,58 @@ export async function register(formData) {
   } catch (error) {
     console.log("Error while signing up the user :", error);
     throw new Error(error.message || "An error occured while signing up the user");
+  }
+}
+
+export async function login(formData) {
+  const { userName, password } = Object.fromEntries(formData);
+
+  try {
+    await connectToDB();
+
+    const user = await User.findOne({ userName: userName });
+
+    if (!user) {
+      throw new Error("Invalid credentials");
+    }
+
+    const isPassworValid = await bcrypt.compare(password, user.password);
+
+    if (!isPassworValid) {
+      throw new Error("Invalid credentials");
+    }
+
+    let session;
+    const existingSession = await Session.findOne({
+      userId: user._id,
+      expiresAt: { $gt: new Date() },
+    });
+
+    if (existingSession) {
+      session = existingSession;
+      existingSession.expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+      await existingSession.save();
+    } else {
+      session = new Session({
+        userId: user._id,
+        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      });
+      await session.save();
+    }
+
+    const cookieStore = await cookies();
+    cookieStore.set("sessionId", session._id.toString(), {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60,
+      sameSite: "Lax", // CSRF bloque l'envoie de cookies vers d'autres domaines que le domaine du site
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error while log in", error);
+
+    throw new Error(error.message);
   }
 }
