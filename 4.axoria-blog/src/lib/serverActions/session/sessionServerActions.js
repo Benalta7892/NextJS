@@ -130,3 +130,9 @@ export async function logOut() {
     console.log(error);
   }
 }
+
+export async function isPrivatePage(pathname) {
+  const privateSegments = ["/dashboard", "/settings/profile"];
+  // "/dashboard/edit"
+  return privateSegments.some((segment) => pathname === segment || pathname.startsWith(segment + "/"));
+}
