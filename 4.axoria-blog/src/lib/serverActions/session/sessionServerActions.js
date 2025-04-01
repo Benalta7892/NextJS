@@ -5,29 +5,38 @@ import slugify from "slugify";
 import bcrypt from "bcryptjs";
 import { Session } from "@/lib/models/session";
 import { cookies } from "next/headers";
+import AppError from "@/lib/utils/errorHandling/customError";
 
 export async function register(formData) {
   console.log("SERVER ACTION register() called");
   const { userName, email, password, passwordRepeat } = Object.fromEntries(formData);
 
-  if (userName.length < 3) {
-    throw new Error("Username is too short");
-  }
-
-  if (password.length < 6) {
-    throw new Error("Password is too short");
-  }
-
-  if (password !== passwordRepeat) {
-    throw new Error("Password do not match");
-  }
-
   try {
+    if (typeof userName !== "string" || userName.trim().length < 3) {
+      throw new AppError("Username must be at least 3 characters long.");
+    }
+
+    if (typeof password !== "string" || password.trim().length < 6) {
+      throw new AppError("Password must be at least 6 characters long.");
+    }
+
+    if (password !== passwordRepeat) {
+      throw new AppError("Password do not match");
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (typeof email !== "string" || !emailRegex.test(email.trim())) {
+      throw new AppError("Invalid email format");
+    }
+
     await connectToDB();
-    const user = await User.findOne({ userName });
+
+    const user = await User.findOne({
+      $or: [{ userName }, { email }],
+    });
 
     if (user) {
-      throw new Error("Username already exists");
+      throw new AppError(user.userName === userName ? "Username already exists" : "Email already exixts");
     }
 
     const normalizedUserName = slugify(userName, { lower: true, strict: true });
@@ -48,8 +57,12 @@ export async function register(formData) {
 
     return { success: true };
   } catch (error) {
-    console.log("Error while signing up the user :", error);
-    throw new Error(error.message || "An error occured while signing up the user");
+    console.error("Error while registering :", error);
+
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new Error("An error occured while registering");
   }
 }
 

@@ -101,7 +101,7 @@ export async function addPost(formData) {
 
     // On catch les erreurs et on les affiche dans la console
   } catch (error) {
-    console.error("Error while creating ths post :", error);
+    console.error("Error while creating the post :", error);
 
     if (error instanceof AppError) {
       throw error;

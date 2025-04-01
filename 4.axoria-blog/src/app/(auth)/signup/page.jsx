@@ -39,6 +39,7 @@ function page() {
       }
     } catch (error) {
       submitButtonRef.current.textContent = "Submit";
+      serverInfoRef.current.classList.remove("hidden");
       serverInfoRef.current.textContent = `${error.message}`;
       submitButtonRef.current.disabled = false;
     }

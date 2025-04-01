@@ -11,6 +11,8 @@ function page() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    serverInfoRef.current.classList.add("hidden");
     serverInfoRef.current.textContent = "";
     submitButtonRef.current.disabled = true;
 
@@ -18,10 +20,12 @@ function page() {
       const result = await login(new FormData(e.target));
 
       if (result.success) {
+        serverInfoRef.current.classList.remove("hidden");
         router.push("/");
       }
     } catch (error) {
       console.error("Error during login :", error);
+      serverInfoRef.current.classList.remove("hidden");
       submitButtonRef.current.disabled = false;
       serverInfoRef.current.textContent = error.message;
     }
@@ -52,7 +56,7 @@ function page() {
         Submit
       </button>
 
-      <p ref={serverInfoRef} className="text-center mb-10"></p>
+      <p ref={serverInfoRef} className="hidden text-center mb-10"></p>
     </form>
   );
 }
