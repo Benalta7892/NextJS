@@ -9,6 +9,7 @@ function page() {
   const tagInputRef = useRef(null);
   const submitButtonRef = useRef(null);
   const serverValidationText = useRef(null);
+  const imageUploadValidationText = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -74,6 +75,36 @@ function page() {
     }
   };
 
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    const validImageTypes = ["image/jpeg", "image/png", "image/webp"];
+
+    if (!validImageTypes.includes(file.type)) {
+      imageUploadValidationText.current.textContent = "Please upload a valid image (JPEG, PNG or WebP)";
+      e.target.value = "";
+      return;
+    } else {
+      imageUploadValidationText.current.textContent = "";
+    }
+
+    const img = new Image();
+    img.addEventListener("load", checkImgSizeOnlOAD);
+
+    function checkImgSizeOnlOAD() {
+      if (img.width > 1280 || img.height > 720) {
+        imageUploadValidationText.current.textContent = "Image exceeds 1280x720 dimensions.";
+        e.target.value = "";
+        URL.revokeObjectURL(img.scr);
+        return;
+      } else {
+        imageUploadValidationText.current.textContent = "";
+        URL.revokeObjectURL(img.scr);
+      }
+    }
+
+    img.src = URL.createObjectURL(file);
+  };
+
   return (
     <main className="u-main-container bg-white p-7 mt-32 mb-44">
       <h1 className="text-4xl mb-4">Write an article 📝</h1>
@@ -91,6 +122,20 @@ function page() {
           placeholder="Title"
           required
         />
+
+        <label htmlFor="coverImage" className="f-label">
+          Cover image (1280x720 for best quality, or less)
+        </label>
+        <input
+          type="file"
+          name="coverImage"
+          className="shadow cursor-pointer border rounded w-full p-3 text-gray-700 mb-2 focus:outline-none focus:shadow-outline"
+          id="coverImage"
+          placeholder="Article's cover image"
+          onChange={handleFileChange}
+          required
+        />
+        <p ref={imageUploadValidationText} className="text-red-700 mb-7"></p>
 
         <div className="mb-10">
           <label className="f-label" htmlFor="tag">
