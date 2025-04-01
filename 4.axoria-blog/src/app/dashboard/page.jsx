@@ -1,4 +1,4 @@
 const page = () => {
-  return <div>Dashboard</div>;
+  return <div className="pt-44">Dashboard</div>;
 };
 export default page;
