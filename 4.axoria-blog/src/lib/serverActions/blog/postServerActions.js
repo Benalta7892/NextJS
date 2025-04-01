@@ -11,6 +11,8 @@ import { markedHighlight } from "marked-highlight";
 import "prismjs/components/prism-markup";
 import "prismjs/components/prism-css";
 import "prismjs/components/prism-javascript";
+import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
+import AppError from "@/lib/utils/errorHandling/customError";
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
@@ -21,11 +23,33 @@ export async function addPost(formData) {
 
   // try catch pour gérer les erreurs lors de la création du post
   try {
+    if (typeof title !== "string" || title.trim().length < 3) {
+      throw new AppError("Invalid data");
+    }
+
+    if (typeof markdownArticle !== "string" || markdownArticle.trim().length === 0) {
+      throw new AppError("Invalid data");
+    }
+
     // On attend la connexion à la base de données ou on utilise la connexion existante
     await connectToDB();
 
+    const session = await sessionInfo();
+
+    if (!session.success) {
+      throw new AppError("Authentication required");
+    }
+
     // Gestion des tags
+    if (typeof tags !== "string") {
+      throw new AppError("Invalid data");
+    }
+    // On parse le tableau sous forme de chaines de charactere pour le retransformer en tableau
     const tagNamesArray = JSON.parse(tags);
+
+    if (!Array.isArray(tagNamesArray)) {
+      throw new AppError("Tags must be a valid array");
+    }
 
     // On veut un tableau d'ObjectId pour les tags
     const tagIds = await Promise.all(
@@ -71,14 +95,17 @@ export async function addPost(formData) {
 
     // On sauvegarde le post dans la base de données
     const savedPost = await newPost.save();
-    console.log("Post saved");
 
     // On retourne un objet avec un message de succès et le slug du post
     return { success: true, slug: savedPost.slug };
 
     // On catch les erreurs et on les affiche dans la console
-  } catch (err) {
-    console.log("Error while creating the post :", err);
-    throw new Error(err.message || "An error occured while creating the post");
+  } catch (error) {
+    console.error("Error while creating ths post :", error);
+
+    if (error instanceof AppError) {
+      throw error;
+    }
+    throw new Error("An error occured while creating the post");
   }
 }
