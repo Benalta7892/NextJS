@@ -13,13 +13,15 @@ import "prismjs/components/prism-css";
 import "prismjs/components/prism-javascript";
 import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
 import AppError from "@/lib/utils/errorHandling/customError";
+import crypto from "crypto";
+import sharp from "sharp";
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 
 export async function addPost(formData) {
   // On extrait les données du formulaire (destructuring grace aux names des inputs et textarea)
-  const { title, markdownArticle, tags } = Object.fromEntries(formData);
+  const { title, markdownArticle, tags, coverImage } = Object.fromEntries(formData);
 
   // try catch pour gérer les erreurs lors de la création du post
   try {
@@ -38,6 +40,49 @@ export async function addPost(formData) {
 
     if (!session.success) {
       throw new AppError("Authentication required");
+    }
+
+    // Gestion de l'upload de l'image
+    if (!coverImage || !(coverImage instanceof File)) {
+      throw new AppError("Invalid data");
+    }
+
+    const validImageTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+    if (!validImageTypes.includes(coverImage.type)) {
+      throw new AppError("Invalid data");
+    }
+    // Convertit l’image en buffer pour lire et analyser au bon format ses proprietes comme la hauteur et la largeur
+    const imageBuffer = Buffer.from(await coverImage.arrayBuffer());
+
+    // Permet d'analyser les images quand elle sont au bon format et on en retire la hauteur et la largeur des metadonnes
+    const { width, height } = await sharp(imageBuffer).metadata();
+
+    if (width > 1280 || height > 720) {
+      throw new AppError("Invalid data");
+    }
+
+    // Génère un nom unique pour l’image avec un ID aléatoire avant le nom d’origine
+    const uniqueFileName = `${crypto.randomUUID()}_${coverImage.name.trim()}`;
+
+    // adresse de mise en ligne, permet d'envoyer une requete pour ajouter une image
+    const uploadUrl = `${process.env.BUNNY_STORAGE_HOST}/${process.env.BUNNY_STORAGE_ZONE}/${uniqueFileName}`;
+
+    // Pour consommer/servire l'image
+    const publicImageUrl = `https://${process.env.BUNNY_STORAGE_MEDIA}/${uniqueFileName}`;
+
+    // Envoyer (uploader) l’image vers Bunny
+    const response = await fetch(uploadUrl, {
+      method: "PUT",
+      headers: {
+        AccessKey: process.env.BUNNY_STORAGE_API_KEY,
+        "Content-type": "application/octet-stream",
+      },
+      body: imageBuffer,
+    });
+
+    if (!response.ok) {
+      throw new AppError(`Error while uploading the image : ${response.statusText}`);
     }
 
     // Gestion des tags
@@ -91,6 +136,7 @@ export async function addPost(formData) {
       markdownArticle,
       markdownHTMLResult,
       tags: tagIds,
+      coverImageUrl: publicImageUrl,
     });
 
     // On sauvegarde le post dans la base de données

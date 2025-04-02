@@ -77,7 +77,7 @@ function page() {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    const validImageTypes = ["image/jpeg", "image/png", "image/webp"];
+    const validImageTypes = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
     if (!validImageTypes.includes(file.type)) {
       imageUploadValidationText.current.textContent = "Please upload a valid image (JPEG, PNG or WebP)";
