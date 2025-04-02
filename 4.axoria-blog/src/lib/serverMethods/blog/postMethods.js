@@ -27,3 +27,11 @@ export const getPosts = async () => {
 
   return posts;
 };
+
+export const getUserPostsFromUserId = async (userId) => {
+  await connectToDB();
+
+  const posts = await Post.find({ author: userId }).select("title _id slug");
+
+  return posts;
+};

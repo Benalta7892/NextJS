@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { logOut, isPrivatePage } from "@/lib/serverActions/session/sessionServerActions";
 
-const NavbarDropdown = () => {
+const NavbarDropdown = ({ userId }) => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef();
   const router = useRouter();
@@ -48,7 +48,7 @@ const NavbarDropdown = () => {
       {isOpen && (
         <ul className="absolute right-0 top-10 w-[250px] border-b border-x border-zinc-300">
           <li className="bg-slate-50 hover:bg-slate-200 border-b border-slate-300">
-            <Link onClick={closeDropdown} href="/dashboard" className="block p-4">
+            <Link onClick={closeDropdown} href={`/dashboard/${userId}`} className="block p-4">
               Dashboard
             </Link>
           </li>
