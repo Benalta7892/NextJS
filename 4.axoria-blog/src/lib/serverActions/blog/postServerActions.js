@@ -137,6 +137,7 @@ export async function addPost(formData) {
       markdownHTMLResult,
       tags: tagIds,
       coverImageUrl: publicImageUrl,
+      author: session.userId,
     });
 
     // On sauvegarde le post dans la base de données
