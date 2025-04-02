@@ -7,7 +7,7 @@ import { Session } from "@/lib/models/session";
 import { cookies } from "next/headers";
 import AppError from "@/lib/utils/errorHandling/customError";
 
-export async function register(formData) {
+export const register = async (formData) => {
   console.log("SERVER ACTION register() called");
   const { userName, email, password, passwordRepeat } = Object.fromEntries(formData);
 
@@ -64,9 +64,9 @@ export async function register(formData) {
     }
     throw new Error("An error occured while registering");
   }
-}
+};
 
-export async function login(formData) {
+export const login = async (formData) => {
   const { userName, password } = Object.fromEntries(formData);
 
   try {
@@ -121,9 +121,9 @@ export async function login(formData) {
 
     throw new Error(error.message);
   }
-}
+};
 
-export async function logOut() {
+export const logOut = async () => {
   const cookieStore = await cookies();
   const sessionId = cookieStore.get("sessionId")?.value;
 
@@ -142,10 +142,10 @@ export async function logOut() {
   } catch (error) {
     console.log(error);
   }
-}
+};
 
-export async function isPrivatePage(pathname) {
+export const isPrivatePage = async (pathname) => {
   const privateSegments = ["/dashboard", "/settings/profile"];
   // "/dashboard/edit"
   return privateSegments.some((segment) => pathname === segment || pathname.startsWith(segment + "/"));
-}
+};

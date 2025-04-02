@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { getUserPostsFromUserId } from "@/lib/serverMethods/blog/postMethods";
+import DeletePostButton from "./components/DeletePostButton";
 
 const page = async ({ params }) => {
   const { userId } = await params;
@@ -14,15 +15,17 @@ const page = async ({ params }) => {
         {posts.length > 0 ? (
           posts.map((post) => (
             <li key={post._id} className="flex items-center mb-2 bg-slate-50 py-2 pl-4">
-              <Link href={`/article/${post.slug}`} className="mr-auto underline underline-offset-2 text-violet-600">
+              <Link
+                href={`/article/${post.slug}`}
+                className="mr-auto underline underline-offset-2   text-lg text-violet-600">
                 {post.title}
               </Link>
-              <button>Delete</button>
               <Link
                 href={`/dashboard/edit/${post.slug}`}
-                className="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-4 rounded mr-2">
+                className="bg-indigo-500 hover:bg-indigo-700 min-w-20 text-center text-white font-bold py-2 px-4 rounded mr-2">
                 Edit
               </Link>
+              <DeletePostButton id={post._id.toString()} />
             </li>
           ))
         ) : (

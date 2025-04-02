@@ -15,11 +15,12 @@ import { sessionInfo } from "@/lib/serverMethods/session/sessionMethods";
 import AppError from "@/lib/utils/errorHandling/customError";
 import crypto from "crypto";
 import sharp from "sharp";
+import { revalidatePath } from "next/cache";
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
 
-export async function addPost(formData) {
+export const addPost = async (formData) => {
   // On extrait les données du formulaire (destructuring grace aux names des inputs et textarea)
   const { title, markdownArticle, tags, coverImage } = Object.fromEntries(formData);
 
@@ -153,6 +154,49 @@ export async function addPost(formData) {
     if (error instanceof AppError) {
       throw error;
     }
+
     throw new Error("An error occured while creating the post");
   }
-}
+};
+
+export const deletePost = async (id) => {
+  try {
+    await connectToDB();
+
+    const user = await sessionInfo();
+    if (!user) {
+      throw new AppError("Authentication required");
+    }
+
+    const post = await Post.findById(id);
+    if (!post) {
+      throw new AppError("Post not found");
+    }
+
+    await Post.findByIdAndDelete(id);
+
+    if (post.coverImageUrl) {
+      const fileName = post.coverImageUrl.split("/").pop();
+      const deleteUrl = `${process.env.BUNNY_STORAGE_HOST}/${process.env.BUNNY_STORAGE_ZONE}/${fileName}`;
+
+      const response = await fetch(deleteUrl, {
+        method: "DELETE",
+        headers: { AccessKey: process.env.BUNNY_STORAGE_API_KEY },
+      });
+
+      if (!response.ok) {
+        throw new AppError(`Failed to delete image : ${response.statusText}`);
+      }
+    }
+
+    revalidatePath(`/article/${post.slug}`);
+  } catch (error) {
+    console.error("Error while creating the post :", error);
+
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    throw new Error("An error occured while creating the post");
+  }
+};
