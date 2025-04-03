@@ -2,6 +2,7 @@ import { Post } from "@/lib/models/post";
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import { Tag } from "@/lib/models/tag";
 import { notFound } from "next/navigation";
+import { User } from "@/lib/models/user";
 
 export const getPost = async (slug) => {
   await connectToDB();
@@ -53,4 +54,23 @@ export const getPostsByTag = async (tagSlug) => {
     .sort({ createdAt: -1 });
 
   return posts;
+};
+
+export const getPostsByAuthor = async (normalizedUserName) => {
+  await connectToDB();
+
+  const author = await User.findOne({ normalizedUserName });
+  if (!author) {
+    notFound();
+  }
+
+  const posts = await Post.find({ author: author._id })
+    .populate({
+      path: "author",
+      select: "userName normalizedUserName",
+    })
+    .select("title coverImageUrl slug createdAt")
+    .sort({ createdAt: -1 });
+
+  return { author, posts };
 };
