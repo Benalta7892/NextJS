@@ -3,7 +3,7 @@ import { addPost } from "@/lib/serverActions/blog/postServerActions";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 
-function page() {
+const page = () => {
   const [tags, setTags] = useState([]);
   const router = useRouter();
   const tagInputRef = useRef(null);
@@ -195,5 +195,5 @@ function page() {
       </form>
     </main>
   );
-}
+};
 export default page;
