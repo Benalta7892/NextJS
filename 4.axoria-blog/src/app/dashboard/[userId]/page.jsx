@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { getUserPostsFromUserId } from "@/lib/serverMethods/blog/postMethods";
-import DeletePostButton from "./components/DeletePostButton";
+import DeletePostButton from "./(components)/DeletePostButton";
 
 const page = async ({ params }) => {
   const { userId } = await params;

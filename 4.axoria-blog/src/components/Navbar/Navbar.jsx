@@ -4,7 +4,6 @@ import NavbarDropdown from "./NavbarDropdown";
 
 async function Navbar() {
   const session = await sessionInfo();
-  console.log(session);
 
   return (
     <nav className="fixed w-full bg-slate-50 border-b border-b-zinc-300">

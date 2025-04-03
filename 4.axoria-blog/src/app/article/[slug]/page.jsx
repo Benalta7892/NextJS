@@ -7,7 +7,6 @@ import Image from "next/image";
 const page = async ({ params }) => {
   const { slug } = await params;
   const post = await getPost(slug);
-  console.log(post);
 
   return (
     <main className="u-main-container u-padding-content-container">

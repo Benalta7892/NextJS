@@ -3,7 +3,6 @@ import { getTags } from "@/lib/serverMethods/blog/tagMethods";
 
 const page = async () => {
   const tags = await getTags();
-  console.log(tags, "tagsConsole");
 
   return (
     <main className="u-main-container u-padding-content-container">

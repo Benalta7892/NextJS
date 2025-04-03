@@ -4,7 +4,6 @@ import BlogCard from "@/components/BlogCard";
 const page = async ({ params }) => {
   const { author } = await params;
   const postsData = await getPostsByAuthor(author);
-  console.log(postsData);
 
   return (
     <main className="u-main-container u-padding-content-container">

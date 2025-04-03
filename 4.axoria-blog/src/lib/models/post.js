@@ -61,7 +61,6 @@ postSchema.pre("save", async function (next) {
 
     // On rajoute le slug au post
     this.slug = slugCandidate;
-    console.log("Final slug", slugCandidate);
   }
   // Pour finir, on appelle next() pour passer au middleware suivant ou à la sauvegarde
   next();

@@ -8,7 +8,6 @@ import { cookies } from "next/headers";
 import AppError from "@/lib/utils/errorHandling/customError";
 
 export const register = async (formData) => {
-  console.log("SERVER ACTION register() called");
   const { userName, email, password, passwordRepeat } = Object.fromEntries(formData);
 
   try {
@@ -53,8 +52,6 @@ export const register = async (formData) => {
 
     await newUser.save();
 
-    console.log("User saved to db");
-
     return { success: true };
   } catch (error) {
     console.error("Error while registering :", error);
@@ -77,10 +74,6 @@ export const login = async (formData) => {
     if (!user) {
       throw new Error("Invalid credentials");
     }
-
-    console.log("User found:", user);
-    console.log("User password (hashed):", user.password);
-    console.log("Password entered:", password);
 
     const isPassworValid = await bcrypt.compare(password, user.password);
 
@@ -139,9 +132,7 @@ export const logOut = async () => {
     });
 
     return { success: true };
-  } catch (error) {
-    console.log(error);
-  }
+  } catch (error) {}
 };
 
 export const isPrivatePage = async (pathname) => {

@@ -4,7 +4,6 @@ import BlogCard from "@/components/BlogCard";
 const page = async ({ params }) => {
   const { tag } = await params;
   const posts = await getPostsByTag(tag);
-  console.log(posts, "posts from tag");
 
   return (
     <main className="u-main-container u-padding-content-container">
