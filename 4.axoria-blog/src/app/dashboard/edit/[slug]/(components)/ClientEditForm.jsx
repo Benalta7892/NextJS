@@ -1,5 +1,6 @@
 "use client";
 import { addPost } from "@/lib/serverActions/blog/postServerActions";
+import areTagsSimilar from "@/lib/utils/general/utils";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 
@@ -19,9 +20,28 @@ const ClientEditForm = ({ post }) => {
     // Les donnees de notre formulaire
     const formData = new FormData(e.target);
 
+    // On veux lire ce qu'il y a dans formData et verifier si il y a des changements
+    const readableFormData = Object.fromEntries(formData); // Lire la valeur de tous les inputs
+    const areSameTags = areTagsSimilar(tags, post.tags);
+    console.log(readableFormData);
+
+    if (
+      readableFormData.coverImage.size === 0 &&
+      readableFormData.title.trim() === post.title &&
+      readableFormData.markdownArticle.trim() === post.markdownArticle &&
+      areSameTags
+    ) {
+      console.log("Dans la condition");
+      serverValidationText.current.textContent = "You must make a change before submitting";
+      return;
+    } else {
+      serverValidationText.current.textContent = "";
+    }
+
     // On met tags dans le formData
     // On utilise JSON.stringify pour convertir le tableau en chaîne de caractères
     formData.set("tags", JSON.stringify(tags));
+    formData.set("tags", post.slug);
 
     serverValidationText.current.textContent = "";
     submitButtonRef.current.textContent = "Updating Post...";
@@ -122,7 +142,10 @@ const ClientEditForm = ({ post }) => {
         />
 
         <label htmlFor="coverImage" className="f-label">
-          Cover image (1280x720 for best quality, or less)
+          <span>Cover image (1280x720 for best quality, or less)</span>
+          <span className="block font-normal">
+            Changing the image is <span className="font-bold">optional</span> in edit mode
+          </span>
         </label>
         <input
           type="file"
@@ -131,7 +154,6 @@ const ClientEditForm = ({ post }) => {
           id="coverImage"
           placeholder="Article's cover image"
           onChange={handleFileChange}
-          required
         />
         <p ref={imageUploadValidationText} className="text-red-700 mb-7"></p>
 
@@ -196,3 +218,4 @@ const ClientEditForm = ({ post }) => {
   );
 };
 export default ClientEditForm;
+//
