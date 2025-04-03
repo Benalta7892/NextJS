@@ -49,7 +49,7 @@ export const getPostsByTag = async (tagSlug) => {
       path: "author",
       select: "userName",
     })
-    .select("title covertImageUrl slug createdAt")
+    .select("title coverImageUrl slug createdAt")
     .sort({ createdAt: -1 });
 
   return posts;

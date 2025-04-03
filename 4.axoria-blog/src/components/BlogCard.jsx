@@ -9,7 +9,7 @@ function BlogCard({ post }) {
           src={post.coverImageUrl}
           width={340}
           height={190}
-          alt={`Description de l'article : ${post.title}`}
+          alt={`Image de description de l'article : ${post.title}`}
           className="w-full rounded-t-sm object-cover"
         />
       </Link>
@@ -24,7 +24,7 @@ function BlogCard({ post }) {
             })}
           </time>
           <Link
-            href={`/categories/author/${post.author.normalizedUsername}`}
+            href={`/categories/author/${post.author.normalizedUserName}`}
             className="ml-auto text-base text-gray-700
                       hover:text-gray-600 whitespace-nowrap truncate">
             John Doe
