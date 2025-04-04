@@ -199,6 +199,7 @@ export const editPost = async (formData) => {
         throw new Error();
       }
 
+      // Delete image
       const toDeleteImageFileName = postToEdit.coverImageUrl.split("?").pop();
       const deleteUrl = `${process.env.BUNNY_STORAGE_HOST}/${process.env.BUNNY_STORAGE_ZONE}/${toDeleteImageFileName}`;
 
@@ -210,6 +211,26 @@ export const editPost = async (formData) => {
       if (!imageDeletionResponse.ok) {
         throw new AppError(`Error while deleting the image ${imageDeletionResponse.statusText}`);
       }
+
+      // Upload new image
+      const ImageToUploadFileName = `${crypto.randomUUID()}_${coverImage.name}`;
+      const imageToUploadUrl = `${process.env.BUNNY_STORAGE_HOST}/${process.env.BUNNY_STORAGE_ZONE}/${ImageToUploadFileName}`;
+      const imageToUploadPublicUrl = `https://${process.env.BUNNY_STORAGE_MEDIA}/${imageToUploadUrl}`;
+
+      const imageToUploadResponse = await fetch(imageToUploadUrl, {
+        method: "PUT",
+        headers: {
+          AccessKey: process.env.BUNNY_STORAGE_API_KEY,
+          "Content-Type": "application/octet-stream",
+        },
+        body: imageBuffer,
+      });
+
+      if (!imageToUploadResponse) {
+        throw new Error(`Error while uploading the new image : ${imageDeletionResponse.statusText}`);
+      }
+
+      updatedData.coverImageUrl = imageToUploadPublicUrl;
     }
   } catch (error) {
     console.error("Error while creating the post :", error);
