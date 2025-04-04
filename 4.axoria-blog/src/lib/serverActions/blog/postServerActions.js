@@ -16,7 +16,7 @@ import AppError from "@/lib/utils/errorHandling/customError";
 import crypto from "crypto";
 import sharp from "sharp";
 import { revalidatePath } from "next/cache";
-import { generateUniqueSlug } from "@/lib/utils/general/utils";
+import { areTagsSimilar, generateUniqueSlug } from "@/lib/utils/general/utils";
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
@@ -161,7 +161,8 @@ export const addPost = async (formData) => {
 };
 
 export const editPost = async (formData) => {
-  const { slug, title, markdownArticle, coverImage, tags, postToEdit } = Object.fromEntries(formData);
+  const { postToEditStringified, title, markdownArticle, coverImage, tags } = Object.fromEntries(formData);
+  const postToEdit = JSON.parse(postToEditStringified);
 
   try {
     await connectToDB();
@@ -231,6 +232,17 @@ export const editPost = async (formData) => {
       }
 
       updatedData.coverImageUrl = imageToUploadPublicUrl;
+    }
+
+    // Tags management
+    if (typeof tags !== "strine") throw new Error();
+
+    const tagNamesArray = JSON.parse(tags);
+    if (!Array.isArray(tagNamesArray)) throw new Error();
+
+    if (!areTagsSimilar(tagNamesArray, postToEdit.tags)) {
+      const tagIds = await Promise.all(tagNamesArray.map((tag) => findOrCreateTag(tag)));
+      updatedData.tags = tagIds;
     }
   } catch (error) {
     console.error("Error while creating the post :", error);
