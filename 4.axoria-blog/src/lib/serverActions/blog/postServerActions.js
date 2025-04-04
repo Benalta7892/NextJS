@@ -16,6 +16,7 @@ import AppError from "@/lib/utils/errorHandling/customError";
 import crypto from "crypto";
 import sharp from "sharp";
 import { revalidatePath } from "next/cache";
+import { generateUniqueSlug } from "@/lib/utils/general/utils";
 
 const window = new JSDOM("").window;
 const DOMPurify = createDOMPurify(window);
@@ -148,6 +149,35 @@ export const addPost = async (formData) => {
     return { success: true, slug: savedPost.slug };
 
     // On catch les erreurs et on les affiche dans la console
+  } catch (error) {
+    console.error("Error while creating the post :", error);
+
+    if (error instanceof AppError) {
+      throw error;
+    }
+
+    throw new Error("An error occured while creating the post");
+  }
+};
+
+export const editPost = async (formData) => {
+  const { slug, title, markdownArticle, coverImage, tags, postToEdit } = Object.fromEntries(formData);
+
+  try {
+    await connectToDB();
+
+    const session = await sessionInfo();
+    if (!session.success) {
+      throw new Error("");
+    }
+
+    const updatedData = {};
+
+    if (typeof title !== "string") throw new Error();
+    if (title.trim() !== postToEdit.title) {
+      updatedData.title = title;
+      updatedData.slug = await generateUniqueSlug(title);
+    }
   } catch (error) {
     console.error("Error while creating the post :", error);
 

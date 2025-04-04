@@ -42,6 +42,7 @@ const ClientEditForm = ({ post }) => {
     // On utilise JSON.stringify pour convertir le tableau en chaîne de caractères
     formData.set("tags", JSON.stringify(tags));
     formData.set("tags", post.slug);
+    formData.set("postToEdit", post);
 
     serverValidationText.current.textContent = "";
     submitButtonRef.current.textContent = "Updating Post...";
