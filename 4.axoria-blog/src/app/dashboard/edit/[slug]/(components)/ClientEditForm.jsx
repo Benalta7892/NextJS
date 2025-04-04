@@ -1,6 +1,6 @@
 "use client";
-import { addPost } from "@/lib/serverActions/blog/postServerActions";
-import areTagsSimilar from "@/lib/utils/general/utils";
+import { editPost } from "@/lib/serverActions/blog/postServerActions";
+import { areTagsSimilar } from "@/lib/utils/general/utils";
 import { useRouter } from "next/navigation";
 import { useState, useRef } from "react";
 
@@ -41,14 +41,14 @@ const ClientEditForm = ({ post }) => {
     // On met tags dans le formData
     // On utilise JSON.stringify pour convertir le tableau en chaîne de caractères
     formData.set("tags", JSON.stringify(tags));
-    formData.set("postToEdit", JSON.stringify(post));
+    formData.set("postToEditStringified", JSON.stringify(post));
 
     serverValidationText.current.textContent = "";
     submitButtonRef.current.textContent = "Updating Post...";
     submitButtonRef.current.disabled = true;
 
     try {
-      const result = await addPost(formData);
+      const result = await editPost(formData);
 
       if (result.success) {
         submitButtonRef.current.textContent = "Post updated ✅";

@@ -163,13 +163,14 @@ export const addPost = async (formData) => {
 export const editPost = async (formData) => {
   const { postToEditStringified, title, markdownArticle, coverImage, tags } = Object.fromEntries(formData);
   const postToEdit = JSON.parse(postToEditStringified);
+  console.log(postToEditStringified, postToEdit, title, markdownArticle, coverImage, tags);
 
   try {
     await connectToDB();
 
     const session = await sessionInfo();
     if (!session.success) {
-      throw new Error("");
+      throw new Error();
     }
 
     const updatedData = {};
@@ -201,7 +202,7 @@ export const editPost = async (formData) => {
       }
 
       // Delete image
-      const toDeleteImageFileName = postToEdit.coverImageUrl.split("?").pop();
+      const toDeleteImageFileName = postToEdit.coverImageUrl.split("/").pop();
       const deleteUrl = `${process.env.BUNNY_STORAGE_HOST}/${process.env.BUNNY_STORAGE_ZONE}/${toDeleteImageFileName}`;
 
       const imageDeletionResponse = await fetch(deleteUrl, {
@@ -214,8 +215,8 @@ export const editPost = async (formData) => {
       }
 
       // Upload new image
-      const ImageToUploadFileName = `${crypto.randomUUID()}_${coverImage.name}`;
-      const imageToUploadUrl = `${process.env.BUNNY_STORAGE_HOST}/${process.env.BUNNY_STORAGE_ZONE}/${ImageToUploadFileName}`;
+      const imageToUploadFileName = `${crypto.randomUUID()}_${coverImage.name}`;
+      const imageToUploadUrl = `${process.env.BUNNY_STORAGE_HOST}/${process.env.BUNNY_STORAGE_ZONE}/${imageToUploadFileName}`;
       const imageToUploadPublicUrl = `https://${process.env.BUNNY_STORAGE_MEDIA}/${imageToUploadUrl}`;
 
       const imageToUploadResponse = await fetch(imageToUploadUrl, {
@@ -235,7 +236,7 @@ export const editPost = async (formData) => {
     }
 
     // Tags management
-    if (typeof tags !== "strine") throw new Error();
+    if (typeof tags !== "string") throw new Error();
 
     const tagNamesArray = JSON.parse(tags);
     if (!Array.isArray(tagNamesArray)) throw new Error();
@@ -244,6 +245,12 @@ export const editPost = async (formData) => {
       const tagIds = await Promise.all(tagNamesArray.map((tag) => findOrCreateTag(tag)));
       updatedData.tags = tagIds;
     }
+
+    if (Object.keys(updatedData).length === 0) throw new Error();
+
+    const updatedPost = await Post.findByIdAndUpdate(postToEdit._id, updatedData, { new: true });
+
+    return { success: true, slug: updatedPost.slug };
   } catch (error) {
     console.error("Error while creating the post :", error);
 
