@@ -18,16 +18,17 @@ const NavbarDropdown = ({ userId }) => {
   };
 
   const handleLogout = async () => {
-    await logOut();
+    const result = await logOut();
+    if (result.success) {
+      setIsAuthenticated({
+        loading: false,
+        isConnected: false,
+        userId: null,
+      });
 
-    setIsAuthenticated({
-      loading: false,
-      isConnected: false,
-      userId: null,
-    });
-
-    if (isPrivatePage(window.location.pathname)) {
-      router.push("/signin");
+      if (isPrivatePage(window.location.pathname)) {
+        router.push("/signin");
+      }
     }
   };
 

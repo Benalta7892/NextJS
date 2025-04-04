@@ -109,7 +109,7 @@ export const login = async (formData) => {
       sameSite: "Lax", // CSRF bloque l'envoie de cookies vers d'autres domaines que le domaine du site
     });
     revalidateTag("auth-session");
-    return { success: true };
+    return { success: true, userId: user._id.toString() };
   } catch (error) {
     console.error("Error while log in", error);
 
