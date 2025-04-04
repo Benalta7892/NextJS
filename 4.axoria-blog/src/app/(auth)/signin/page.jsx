@@ -2,8 +2,11 @@
 import { useRef } from "react";
 import { login } from "@/lib/serverActions/session/sessionServerActions";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/AuthContext";
 
 function page() {
+  const { setIsAuthenticated } = useAuth();
+
   const serverInfoRef = useRef();
   const submitButtonRef = useRef();
 
@@ -20,7 +23,12 @@ function page() {
       const result = await login(new FormData(e.target));
 
       if (result.success) {
-        serverInfoRef.current.classList.remove("hidden");
+        // serverInfoRef.current.classList.remove("hidden");
+        setIsAuthenticated({
+          loading: false,
+          isConnected: true,
+          userId: result.userId,
+        });
         router.push("/");
       }
     } catch (error) {
