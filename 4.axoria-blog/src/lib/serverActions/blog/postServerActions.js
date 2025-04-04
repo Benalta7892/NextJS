@@ -250,6 +250,8 @@ export const editPost = async (formData) => {
 
     const updatedPost = await Post.findByIdAndUpdate(postToEdit._id, updatedData, { new: true });
 
+    revalidatePath(`/article/${postToEdit.slug}`);
+
     return { success: true, slug: updatedPost.slug };
   } catch (error) {
     console.error("Error while creating the post :", error);

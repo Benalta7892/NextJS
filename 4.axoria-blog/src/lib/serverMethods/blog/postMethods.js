@@ -4,6 +4,8 @@ import { Tag } from "@/lib/models/tag";
 import { notFound } from "next/navigation";
 import { User } from "@/lib/models/user";
 
+export const dyamic = "force-static";
+
 export const getPost = async (slug) => {
   await connectToDB();
 
@@ -75,10 +77,10 @@ export const getPostsByAuthor = async (normalizedUserName) => {
   return { author, posts };
 };
 
-export const getPostForEdit = async (slug) => {
+export const getPostForEdit = async (id) => {
   await connectToDB();
 
-  const post = await Post.findOne({ slug })
+  const post = await Post.findOne({ _id: id })
     .populate({
       path: "author",
       select: "userName normalizedUserName",
