@@ -27,7 +27,7 @@ function BlogCard({ post }) {
             href={`/categories/author/${post.author.normalizedUserName}`}
             className="ml-auto text-base text-gray-700
                       hover:text-gray-600 whitespace-nowrap truncate">
-            John Doe
+            {post.author.userName}
           </Link>
         </div>
         <Link

@@ -26,7 +26,10 @@ export const getPost = async (slug) => {
 
 export const getPosts = async () => {
   await connectToDB();
-  const posts = await Post.find({});
+  const posts = await Post.find({}).populate({
+    path: "author",
+    select: "userName normalizedUserName",
+  });
 
   return posts;
 };
