@@ -26,7 +26,7 @@ const NavbarDropdown = ({ userId }) => {
         userId: null,
       });
 
-      if (isPrivatePage(window.location.pathname)) {
+      if (await isPrivatePage(window.location.pathname)) {
         router.push("/signin");
       }
     }
