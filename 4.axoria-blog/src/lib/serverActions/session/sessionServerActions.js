@@ -6,6 +6,7 @@ import bcrypt from "bcryptjs";
 import { Session } from "@/lib/models/session";
 import { cookies } from "next/headers";
 import AppError from "@/lib/utils/errorHandling/customError";
+import { revalidateTag } from "next/cache";
 
 export const register = async (formData) => {
   const { userName, email, password, passwordRepeat } = Object.fromEntries(formData);
@@ -107,7 +108,7 @@ export const login = async (formData) => {
       maxAge: 7 * 24 * 60 * 60,
       sameSite: "Lax", // CSRF bloque l'envoie de cookies vers d'autres domaines que le domaine du site
     });
-
+    revalidateTag("auth-session");
     return { success: true };
   } catch (error) {
     console.error("Error while log in", error);
@@ -130,7 +131,7 @@ export const logOut = async () => {
       maxAge: 0, // Supprime immediatement le cookie
       sameSite: "strict",
     });
-
+    revalidateTag("auth-session");
     return { success: true };
   } catch (error) {}
 };

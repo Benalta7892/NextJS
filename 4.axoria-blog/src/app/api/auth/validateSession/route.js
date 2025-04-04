@@ -4,7 +4,7 @@ import { User } from "@/lib/models/user";
 import { connectToDB } from "@/lib/utils/db/connectToDB";
 import { NextResponse } from "next/server";
 
-const GET = async () => {
+export async function GET() {
   try {
     const sessionId = (await cookies()).get("sessionId")?.value;
     if (!sessionId) {
@@ -28,6 +28,4 @@ const GET = async () => {
     console.error("Error while validating session :", error);
     return NextResponse.json({ authorized: false }, { status: 500 });
   }
-};
-
-export default GET;
+}
