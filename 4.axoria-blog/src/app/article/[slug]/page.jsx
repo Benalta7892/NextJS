@@ -18,7 +18,7 @@ const page = async ({ params }) => {
           {post.author.userName}
         </Link>
         {post.tags.map((tag) => (
-          <Link key={tag.slug} href={`categories/tag/${tag.slug}`} className="mr-4 underline">
+          <Link key={tag.slug} href={`/categories/tag/${tag.slug}`} className="mr-4 underline">
             #{tag.name}
           </Link>
         ))}
