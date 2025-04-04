@@ -141,3 +141,28 @@ export const isPrivatePage = async (pathname) => {
   // "/dashboard/edit"
   return privateSegments.some((segment) => pathname === segment || pathname.startsWith(segment + "/"));
 };
+
+export const SAsessionInfo = async () => {
+  const cookieStore = await cookies();
+  const sessionId = cookieStore.get("sessionId")?.value;
+
+  if (!sessionId) {
+    return { success: false, userId: null };
+  }
+
+  await connectToDB();
+
+  const session = await Session.findById(sessionId);
+
+  if (!session || session.expiresAt < new Date()) {
+    return { success: false, userId: null };
+  }
+
+  const user = await User.findById(session.userId);
+
+  if (!user) {
+    return { success: false, userId: null };
+  }
+
+  return { success: true, userId: user._id.toString() };
+};
