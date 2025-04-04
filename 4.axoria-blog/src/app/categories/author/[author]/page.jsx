@@ -14,8 +14,8 @@ const page = async ({ params }) => {
       <p className="mr-4 text-md text-zinc-900">Latest articles</p>
 
       <ul className="u-articles-grid">
-        {postsData.length > 0 ? (
-          postsData.map((post) => <BlogCard key={post._id} post={post} />)
+        {postsData.posts.length > 0 ? (
+          postsData.posts.map((post) => <BlogCard key={post._id} post={post} />)
         ) : (
           <li>There is no article written by that author. 🤖</li>
         )}
@@ -23,4 +23,5 @@ const page = async ({ params }) => {
     </main>
   );
 };
+
 export default page;
