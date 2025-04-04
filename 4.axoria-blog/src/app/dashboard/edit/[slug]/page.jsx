@@ -12,4 +12,5 @@ const page = async ({ params }) => {
 
   return <ClientEditForm post={serializablePost} />;
 };
+
 export default page;
